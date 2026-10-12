@@ -20,7 +20,7 @@ export const links = {
   phone: "+1 (510) 988-6909",
   phoneHref: "tel:+15109886909",
   linkedin: "https://www.linkedin.com/in/winmoe",
-  github: "https://github.com/winmoee",
+  github: "https://github.com/joinworkify",
   resume: "/resume",
   youtubeId: "G9SIEQqvQkw",
   workify: "https://joinworkify.com",
