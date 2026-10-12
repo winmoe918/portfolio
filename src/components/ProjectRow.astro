@@ -1,5 +1,5 @@
 ---
-// One project per row: video player (if any), image slider, then details.
+// One project per row: video player (if any), image slider (Embla Carousel), then details.
 import type { Project } from "../data/site";
 import Icon from "./Icon.astro";
 import LineIcon from "./LineIcon.astro";
@@ -37,7 +37,8 @@ const many = images.length > 1;
   {
     images.length > 0 && (
       <div class="media slider" data-slider aria-roledescription="carousel" aria-label={`${title} screenshots`}>
-        <div class="track" data-track tabindex="0">
+        <div class="viewport" data-viewport tabindex="0">
+          <div class="track">
           {images.map((m, i) => (
             <figure class="slide" aria-roledescription="slide" aria-label={`${i + 1} of ${images.length}`}>
               <img
@@ -52,6 +53,7 @@ const many = images.length > 1;
               />
             </figure>
           ))}
+          </div>
         </div>
         {many && (
           <>
@@ -101,64 +103,59 @@ const many = images.length > 1;
 </article>
 
 <script>
-  // Image slider: native scroll-snap (touch swipe), mouse drag, arrows, dots, keyboard
+  // Image slider powered by Embla Carousel: smooth touch/mouse drag with momentum,
+  // springy snapping, arrows, dots and ←/→ keys.
+  import EmblaCarousel from "embla-carousel";
+
   document.querySelectorAll<HTMLElement>("[data-slider]").forEach((slider) => {
-    const track = slider.querySelector<HTMLElement>("[data-track]")!;
-    const slides = Array.from(track.children) as HTMLElement[];
+    const viewport = slider.querySelector<HTMLElement>("[data-viewport]")!;
     const dots = Array.from(slider.querySelectorAll<HTMLButtonElement>("[data-dot]"));
     const prev = slider.querySelector<HTMLButtonElement>("[data-prev]");
     const next = slider.querySelector<HTMLButtonElement>("[data-next]");
 
-    const index = (): number => Math.round(track.scrollLeft / track.clientWidth);
-    const goTo = (i: number): void => {
-      const target = Math.max(0, Math.min(slides.length - 1, i));
-      track.scrollTo({ left: target * track.clientWidth, behavior: "smooth" });
-    };
+    const embla = EmblaCarousel(viewport, {
+      align: "start",
+      containScroll: "trimSnaps",
+      dragFree: false,
+      skipSnaps: false,
+      duration: 28, // lower = faster; 25–30 feels natural
+      watchDrag: dots.length > 1,
+    });
+
     const update = (): void => {
-      const i = index();
+      const i = embla.selectedScrollSnap();
       dots.forEach((d, n) => {
         d.classList.toggle("is-active", n === i);
         d.setAttribute("aria-selected", String(n === i));
       });
-      if (prev) prev.disabled = i === 0;
-      if (next) next.disabled = i === slides.length - 1;
+      if (prev) prev.disabled = !embla.canScrollPrev();
+      if (next) next.disabled = !embla.canScrollNext();
     };
 
-    prev?.addEventListener("click", () => goTo(index() - 1));
-    next?.addEventListener("click", () => goTo(index() + 1));
-    dots.forEach((d, n) => d.addEventListener("click", () => goTo(n)));
-    track.addEventListener("scroll", () => requestAnimationFrame(update), { passive: true });
-    track.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowRight") goTo(index() + 1);
-      if (e.key === "ArrowLeft") goTo(index() - 1);
+    prev?.addEventListener("click", () => embla.scrollPrev());
+    next?.addEventListener("click", () => embla.scrollNext());
+    dots.forEach((d, n) => d.addEventListener("click", () => embla.scrollTo(n)));
+    viewport.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") embla.scrollNext();
+      if (e.key === "ArrowLeft") embla.scrollPrev();
     });
 
-    // Drag to slide with a mouse (touch already swipes natively)
-    let dragX: number | null = null;
-    let startScroll = 0;
-    track.addEventListener("pointerdown", (e) => {
-      if (e.pointerType !== "mouse") return;
-      dragX = e.clientX;
-      startScroll = track.scrollLeft;
-      track.classList.add("is-dragging");
-      track.setPointerCapture(e.pointerId);
-    });
-    track.addEventListener("pointermove", (e) => {
-      if (dragX === null) return;
-      track.scrollLeft = startScroll - (e.clientX - dragX);
-    });
-    const endDrag = (e: PointerEvent): void => {
-      if (dragX === null) return;
-      const moved = e.clientX - dragX;
-      dragX = null;
-      track.classList.remove("is-dragging");
-      const from = Math.round(startScroll / track.clientWidth);
-      goTo(Math.abs(moved) > 50 ? from + (moved < 0 ? 1 : -1) : from);
-    };
-    track.addEventListener("pointerup", endDrag);
-    track.addEventListener("pointercancel", endDrag);
-
+    // Grabbing cursor while dragging
+    embla.on("pointerDown", () => viewport.classList.add("is-dragging"));
+    embla.on("pointerUp", () => viewport.classList.remove("is-dragging"));
+    embla.on("select", update);
+    embla.on("reInit", update);
     update();
+
+    // Load every slide's image once the slider is near the screen, so no image pops in mid-swipe
+    new IntersectionObserver(
+      ([entry], io) => {
+        if (!entry.isIntersecting) return;
+        slider.querySelectorAll<HTMLImageElement>("img[loading='lazy']").forEach((img) => (img.loading = "eager"));
+        io.disconnect();
+      },
+      { rootMargin: "300px 0px" },
+    ).observe(slider);
   });
 </script>
 
@@ -186,31 +183,28 @@ const many = images.length > 1;
     background: #000;
   }
 
-  /* Image slider */
-  .track {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
+  /* Image slider (Embla): viewport clips, track moves */
+  .viewport {
+    overflow: hidden;
     cursor: grab;
+    touch-action: pan-y pinch-zoom;
   }
-  .track::-webkit-scrollbar {
-    display: none;
-  }
-  .track:global(.is-dragging) {
-    scroll-snap-type: none;
+  .viewport:global(.is-dragging) {
     cursor: grabbing;
   }
-  .track:focus-visible {
+  .viewport:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: -2px;
   }
+  .track {
+    display: flex;
+    backface-visibility: hidden;
+  }
   .slide {
     flex: 0 0 100%;
+    min-width: 0;
     margin: 0;
     aspect-ratio: 1600 / 921;
-    scroll-snap-align: start;
   }
   .slide img {
     width: 100%;
@@ -219,6 +213,7 @@ const many = images.length > 1;
     object-position: top center;
     user-select: none;
     -webkit-user-drag: none;
+    pointer-events: none;
   }
 
   .nav {
@@ -348,7 +343,7 @@ const many = images.length > 1;
     .nav {
       display: none;
     }
-    .track {
+    .viewport {
       cursor: auto;
     }
   }
