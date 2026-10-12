@@ -2,6 +2,10 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  # Astro requires Node >= 22.12
+  NODE_VERSION = "22"
+
 [[headers]]
   for = "/_astro/*"
   [headers.values]

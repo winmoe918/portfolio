@@ -88,7 +88,7 @@ const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
       try {
         data.append("access_key", key);
         data.append("subject", `Portfolio message from ${name}${company ? ` (${company})` : ""}`);
-        data.append("from_name", "winmoe portfolio");
+        data.append("from_name", "Portfolio Contact Form");
         const res = await fetch("https://api.web3forms.com/submit", { method: "POST", body: data });
         const json = await res.json();
         if (!res.ok || !json.success) throw new Error(json.message || "Request failed");
