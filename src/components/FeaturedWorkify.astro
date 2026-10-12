@@ -1,0 +1,123 @@
+---
+import { links, workify } from "../data/site";
+import Icon from "./Icon.astro";
+---
+
+<section id="workify" class="section">
+  <div class="feature" data-reveal="fade-up">
+    <img
+      class="feature-bg"
+      src={workify.image}
+      srcset={`${workify.image.replace(".webp", "-800.webp")} 800w, ${workify.image} 1600w`}
+      sizes="(max-width: 736px) 92vw, 48rem"
+      alt=""
+      loading="lazy"
+      width="1600"
+      height="1068"
+    />
+    <div class="feature-body">
+      <div class="brand" data-reveal="fade-right" data-intensity="0">
+        <img src="/logos/workify.png" alt="" width="36" height="30" />
+        <span class="label">{workify.label}</span>
+      </div>
+      <h2 data-reveal="fade-up" data-split="words" data-stagger="125">{workify.heading}</h2>
+      <p data-reveal="fade-up" data-intensity="2">{workify.body}</p>
+      <ul class="features" data-reveal="fade-up" data-stagger="100">
+        {
+          workify.features.map((f) => (
+            <li>
+              <Icon name="check" />
+              {f}
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="buttons stack-mobile spaced" data-reveal="fade-left">
+        <li>
+          <a class="btn" href={links.workify} target="_blank" rel="noopener">Workify <Icon name="arrow" /></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Carrd container style-1: 3rem radius, image + 45deg overlay, content bottom-left */
+  .feature {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 35rem;
+    overflow: hidden;
+    border-radius: 3rem;
+    isolation: isolate;
+  }
+  .feature-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .feature::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(0deg, rgba(15, 17, 17, 0.88) 0%, rgba(15, 17, 17, 0.35) 75%),
+      linear-gradient(45deg, rgba(84, 84, 84, 0.471) 0%, rgba(84, 84, 84, 0.251) 100%);
+  }
+  .feature-body {
+    padding: 3rem;
+  }
+  .feature-body > * + * {
+    margin-top: var(--spacing);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .brand img {
+    width: 1.6rem;
+    height: auto;
+  }
+  .features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem 1.25rem;
+    list-style: none;
+    font-size: 0.85em;
+  }
+  .features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .features :global(.icon) {
+    flex-shrink: 0;
+    width: 1.1em;
+    height: 1.1em;
+    margin-top: 0.15em;
+    fill: var(--accent);
+  }
+  @media (max-width: 736px) {
+    .feature {
+      border-radius: 2rem;
+      text-align: left;
+    }
+    .feature-body {
+      padding: 2rem 1.5rem;
+    }
+    .brand,
+    .feature .buttons {
+      justify-content: flex-start;
+    }
+    .features {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

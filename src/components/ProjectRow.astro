@@ -1,0 +1,360 @@
+---
+// One project per row: video player (if any), image slider, then details.
+import type { Project } from "../data/site";
+import Icon from "./Icon.astro";
+import LineIcon from "./LineIcon.astro";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { title, kind, role, body, stack, media, badge, link } = project;
+const videos = media.filter((m) => m.type === "video");
+const images = media.filter((m) => m.type === "image");
+const many = images.length > 1;
+---
+
+<article class="card project">
+  {
+    videos.map((v) => (
+      <div class="media">
+        <video
+          class="player"
+          src={v.src}
+          poster={v.poster}
+          width={v.width}
+          height={v.height}
+          controls
+          playsinline
+          preload="none"
+          aria-label={v.alt}
+        />
+      </div>
+    ))
+  }
+
+  {
+    images.length > 0 && (
+      <div class="media slider" data-slider aria-roledescription="carousel" aria-label={`${title} screenshots`}>
+        <div class="track" data-track tabindex="0">
+          {images.map((m, i) => (
+            <figure class="slide" aria-roledescription="slide" aria-label={`${i + 1} of ${images.length}`}>
+              <img
+                src={m.src}
+                srcset={`${m.src.replace(".webp", "-800.webp")} 800w, ${m.src} 1600w`}
+                sizes="(max-width: 736px) 92vw, 48rem"
+                alt={m.alt}
+                width="1600"
+                height="921"
+                loading="lazy"
+                draggable="false"
+              />
+            </figure>
+          ))}
+        </div>
+        {many && (
+          <>
+            <button class="nav prev" type="button" aria-label="Previous image" data-prev>
+              <LineIcon name="arrow" />
+            </button>
+            <button class="nav next" type="button" aria-label="Next image" data-next>
+              <LineIcon name="arrow" />
+            </button>
+            <div class="dots" role="tablist" aria-label="Choose image">
+              {images.map((m, i) => (
+                <button
+                  class:list={["dot", i === 0 && "is-active"]}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === 0 ? "true" : "false"}
+                  aria-label={`Image ${i + 1}: ${m.alt}`}
+                  data-dot={i}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    )
+  }
+
+  <div class="project-body">
+    <div class="meta">
+      <span class="kind">{kind}</span>
+      {badge && <span class:list={["badge", badge.tone === "neutral" && "neutral"]}>{badge.text}</span>}
+    </div>
+    <h3>{title}</h3>
+    <p class="role"><span>My role</span> {role}</p>
+    <p class="muted desc">{body}</p>
+    <ul class="chips" aria-label="Skills">
+      {stack.map((s) => <li class="chip">{s}</li>)}
+    </ul>
+    {
+      link && (
+        <a class="text-link more" href={link.href} target="_blank" rel="noopener">
+          {link.label} <Icon name="external" />
+        </a>
+      )
+    }
+  </div>
+</article>
+
+<script>
+  // Image slider: native scroll-snap (touch swipe), mouse drag, arrows, dots, keyboard
+  document.querySelectorAll<HTMLElement>("[data-slider]").forEach((slider) => {
+    const track = slider.querySelector<HTMLElement>("[data-track]")!;
+    const slides = Array.from(track.children) as HTMLElement[];
+    const dots = Array.from(slider.querySelectorAll<HTMLButtonElement>("[data-dot]"));
+    const prev = slider.querySelector<HTMLButtonElement>("[data-prev]");
+    const next = slider.querySelector<HTMLButtonElement>("[data-next]");
+
+    const index = (): number => Math.round(track.scrollLeft / track.clientWidth);
+    const goTo = (i: number): void => {
+      const target = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: target * track.clientWidth, behavior: "smooth" });
+    };
+    const update = (): void => {
+      const i = index();
+      dots.forEach((d, n) => {
+        d.classList.toggle("is-active", n === i);
+        d.setAttribute("aria-selected", String(n === i));
+      });
+      if (prev) prev.disabled = i === 0;
+      if (next) next.disabled = i === slides.length - 1;
+    };
+
+    prev?.addEventListener("click", () => goTo(index() - 1));
+    next?.addEventListener("click", () => goTo(index() + 1));
+    dots.forEach((d, n) => d.addEventListener("click", () => goTo(n)));
+    track.addEventListener("scroll", () => requestAnimationFrame(update), { passive: true });
+    track.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") goTo(index() + 1);
+      if (e.key === "ArrowLeft") goTo(index() - 1);
+    });
+
+    // Drag to slide with a mouse (touch already swipes natively)
+    let dragX: number | null = null;
+    let startScroll = 0;
+    track.addEventListener("pointerdown", (e) => {
+      if (e.pointerType !== "mouse") return;
+      dragX = e.clientX;
+      startScroll = track.scrollLeft;
+      track.classList.add("is-dragging");
+      track.setPointerCapture(e.pointerId);
+    });
+    track.addEventListener("pointermove", (e) => {
+      if (dragX === null) return;
+      track.scrollLeft = startScroll - (e.clientX - dragX);
+    });
+    const endDrag = (e: PointerEvent): void => {
+      if (dragX === null) return;
+      const moved = e.clientX - dragX;
+      dragX = null;
+      track.classList.remove("is-dragging");
+      const from = Math.round(startScroll / track.clientWidth);
+      goTo(Math.abs(moved) > 50 ? from + (moved < 0 ? 1 : -1) : from);
+    };
+    track.addEventListener("pointerup", endDrag);
+    track.addEventListener("pointercancel", endDrag);
+
+    update();
+  });
+</script>
+
+<style>
+  .project {
+    text-align: left;
+  }
+  .project:hover {
+    background: var(--surface);
+  }
+
+  .media {
+    position: relative;
+    margin: 0.75rem 0.75rem 0;
+    overflow: hidden;
+    border-radius: 1.35rem;
+    background: #0d0e0e;
+  }
+
+  /* Video player */
+  .player {
+    display: block;
+    width: 100%;
+    height: auto; /* shape comes from the width/height attributes */
+    background: #000;
+  }
+
+  /* Image slider */
+  .track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    cursor: grab;
+  }
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+  .track:global(.is-dragging) {
+    scroll-snap-type: none;
+    cursor: grabbing;
+  }
+  .track:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  .slide {
+    flex: 0 0 100%;
+    margin: 0;
+    aspect-ratio: 1600 / 921;
+    scroll-snap-align: start;
+  }
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .nav {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(15, 17, 17, 0.6);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    color: #fff;
+    cursor: pointer;
+    opacity: 0;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transform: translateY(-50%);
+    transition:
+      opacity 0.3s ease,
+      background-color 0.3s ease;
+  }
+  .nav :global(.line-icon) {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+  .prev {
+    left: 0.75rem;
+  }
+  .prev :global(.line-icon) {
+    transform: rotate(180deg);
+  }
+  .next {
+    right: 0.75rem;
+  }
+  .slider:hover .nav:not(:disabled),
+  .nav:focus-visible {
+    opacity: 1;
+  }
+  .nav:hover {
+    background: rgba(15, 17, 17, 0.85);
+  }
+  .nav:disabled {
+    cursor: default;
+  }
+
+  .dots {
+    position: absolute;
+    left: 50%;
+    bottom: 0.75rem;
+    z-index: 2;
+    display: flex;
+    gap: 0.4rem;
+    padding: 0.35rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(15, 17, 17, 0.55);
+    transform: translateX(-50%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    transition:
+      width 0.3s ease,
+      background-color 0.3s ease;
+  }
+  .dot.is-active {
+    width: 1.3rem;
+    background: #ffffff;
+  }
+
+  /* Details */
+  .project-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem 1.75rem 1.9rem;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 0.9rem;
+  }
+  .kind {
+    color: var(--faint);
+    font-size: 0.65em;
+    letter-spacing: 0.2rem;
+    text-transform: uppercase;
+  }
+  .role {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.8em;
+  }
+  .role span {
+    margin-right: 0.35rem;
+    color: var(--accent);
+    font-size: 0.85em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .desc {
+    font-size: 0.85em;
+  }
+  .project .chips {
+    justify-content: flex-start;
+  }
+  .more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    align-self: flex-start;
+    font-size: 0.8em;
+  }
+
+  /* Touch screens swipe; arrows are hidden there to keep the image clear */
+  @media (hover: none) {
+    .nav {
+      display: none;
+    }
+    .track {
+      cursor: auto;
+    }
+  }
+  @media (max-width: 736px) {
+    .project-body {
+      padding: 1.25rem 1.25rem 1.5rem;
+    }
+  }
+</style>

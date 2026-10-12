@@ -1,0 +1,140 @@
+---
+// Standalone résumé viewer: the PDF fills the whole window (no header bar)
+import "@fontsource/inter/400.css";
+import "@fontsource/plus-jakarta-sans/600.css";
+import "@fontsource/plus-jakarta-sans/700.css";
+import { profile, resume } from "../data/site";
+
+const canonical = new URL("/resume", Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{profile.name} — Résumé · {resume.role}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={`${profile.name}'s résumé. ${resume.subtitle}.`} />
+    <meta name="theme-color" content="#080A0D" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <main class="pdf-container">
+      <object data={resume.pdf} type="application/pdf" width="100%" height="100%" aria-label={`${profile.name} résumé`}>
+        <iframe src={`${resume.pdf}#toolbar=1&navpanes=0&scrollbar=1`} width="100%" height="100%" title={`${profile.name} résumé`}>
+        </iframe>
+      </object>
+      <!-- Shown when the browser can't display PDFs inline (e.g. Chrome on Android) -->
+      <div class="mobile-fallback" data-fallback hidden>
+        <p>Unable to preview the PDF directly in your browser.</p>
+        <div class="fallback-actions">
+          <a class="btn btn-ghost" href={resume.pdf} target="_blank" rel="noopener">Open PDF</a>
+          <a class="btn btn-primary" href={resume.pdf} download={resume.fileName}>Download PDF</a>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const pdf = document.querySelector<HTMLObjectElement>(".pdf-container object");
+
+      // Browsers without an inline PDF viewer get Open/Download buttons instead of a blank area
+      if ("pdfViewerEnabled" in navigator && !navigator.pdfViewerEnabled) {
+        pdf?.remove();
+        document.querySelector<HTMLElement>("[data-fallback]")?.removeAttribute("hidden");
+      }
+    </script>
+
+    <style is:global>
+      :root {
+        --bg: #080a0d;
+        --text: #f3f4f6;
+        --border: rgba(255, 255, 255, 0.1);
+        --accent: #22c55e;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        white-space: nowrap;
+      }
+      .btn-ghost {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.25);
+      }
+      .btn-primary {
+        background: #f3f4f6;
+        color: #080a0d;
+        font-weight: 700;
+      }
+      .btn-primary:hover {
+        background: #ffffff;
+        transform: translateY(-1px);
+      }
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .pdf-container {
+        flex: 1;
+        width: 100%;
+        height: 100vh;
+        background: #080a0d;
+        position: relative;
+      }
+      iframe,
+      object {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+      }
+      .mobile-fallback {
+        padding: 40px 24px;
+        text-align: center;
+        color: var(--text);
+        background: var(--bg);
+      }
+      .mobile-fallback[hidden] {
+        display: none;
+      }
+      .fallback-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 16px;
+      }
+    </style>
+  </body>
+</html>

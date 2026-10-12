@@ -1,0 +1,58 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import LogoStrip from "../components/LogoStrip.astro";
+import FeaturedWorkify from "../components/FeaturedWorkify.astro";
+import ProjectRow from "../components/ProjectRow.astro";
+import Stats from "../components/Stats.astro";
+import Timeline from "../components/Timeline.astro";
+import Skills from "../components/Skills.astro";
+import ContactForm from "../components/ContactForm.astro";
+import IntroVideo from "../components/IntroVideo.astro";
+import Footer from "../components/Footer.astro";
+import ResumeButton from "../components/ResumeButton.astro";
+import SectionTitle from "../components/SectionTitle.astro";
+import { insideWorkify, otherWork, profile } from "../data/site";
+---
+
+<Base title={profile.title} description={profile.description}>
+  <Hero />
+  <LogoStrip />
+  <IntroVideo />
+  <Stats />
+  <Timeline />
+  <FeaturedWorkify />
+
+  <section id="projects" class="section" aria-labelledby="inside-label">
+    <p id="inside-label" class="label" data-reveal="fade-right" data-intensity="0">Inside Workify</p>
+    <SectionTitle>The tech <span class="grad">behind it</span></SectionTitle>
+    <ul class="project-list">
+      {insideWorkify.map((p) => <li data-reveal="fade-up"><ProjectRow project={p} /></li>)}
+    </ul>
+  </section>
+
+  <section id="work" class="section">
+    <p class="label" data-reveal="fade-right" data-intensity="0">Other work</p>
+    <SectionTitle>More things <span class="grad">I've built</span></SectionTitle>
+    <ul class="project-list">
+      {otherWork.map((p) => <li data-reveal="fade-up"><ProjectRow project={p} /></li>)}
+    </ul>
+  </section>
+
+  <Skills />
+  <ContactForm />
+  <Footer />
+
+  <ResumeButton slot="after" />
+</Base>
+
+<style>
+  /* One project per row */
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    list-style: none;
+  }
+</style>

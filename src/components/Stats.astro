@@ -1,0 +1,69 @@
+---
+import { stats } from "../data/site";
+---
+
+<section class="section" aria-labelledby="numbers-label">
+  <p id="numbers-label" class="label" data-reveal="fade-right" data-intensity="0">By the numbers · at Uber</p>
+  <ul class="stats" data-reveal="fade-up" data-stagger="125">
+    {
+      stats.map((s) => (
+        <li class="card stat">
+          {s.count !== undefined ? (
+            <span class="value" data-count={s.count} data-prefix={s.prefix} data-suffix={s.suffix}>
+              {`${s.prefix ?? ""}${s.count}${s.suffix ?? ""}`}
+            </span>
+          ) : (
+            <span class="value">{s.text}</span>
+          )}
+          <span class="caption">{s.caption}</span>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+    list-style: none;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.6rem 1.75rem;
+    border-radius: 1.75rem;
+    text-align: left;
+  }
+  .value {
+    font-family: var(--font-head);
+    font-size: 2.1em;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .caption {
+    color: var(--muted);
+    font-size: 0.8em;
+  }
+  /* Phones: keep the 2×2 grid, with tighter cards so the values fit */
+  @media (max-width: 480px) {
+    .stats {
+      gap: 0.6rem;
+    }
+    .stat {
+      padding: 1.1rem 1rem;
+      border-radius: 1.25rem;
+    }
+    .value {
+      font-size: min(1.45em, 5.6vw); /* scales down on the narrowest phones */
+      white-space: nowrap;
+    }
+    .caption {
+      font-size: 0.72em;
+    }
+  }
+</style>

@@ -1,0 +1,103 @@
+---
+import { experience } from "../data/site";
+import SectionTitle from "./SectionTitle.astro";
+---
+
+<section id="experience" class="section">
+  <p class="label" data-reveal="fade-right" data-intensity="0">Experience</p>
+  <SectionTitle>Where <span class="grad">I've built</span></SectionTitle>
+  <ol class="timeline">
+    {
+      experience.map((job) => (
+        <li class="job" data-reveal="fade-up">
+          <div class="logo">
+            <img src={job.logo} alt={`${job.company} logo`} width="64" height="64" loading="lazy" />
+          </div>
+          <div class="job-body">
+            <div class="job-head">
+              <h3>
+                {job.company}
+                {job.current && <span class="badge">Now</span>}
+              </h3>
+              <span class="dates">{job.dates}</span>
+            </div>
+            <p class="role">{job.role}</p>
+            <p class="muted summary">{job.summary}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .timeline {
+    position: relative;
+    list-style: none;
+    margin-top: 2.25rem;
+  }
+  /* Vertical rail behind the logos */
+  .timeline::before {
+    content: "";
+    position: absolute;
+    top: 1.5rem;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    width: 1px;
+    background: var(--line);
+  }
+  .job {
+    position: relative;
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 1.25rem;
+    text-align: left;
+  }
+  .job + .job {
+    margin-top: 2rem;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0.45rem;
+    border-radius: 0.9rem;
+    background: #ffffff;
+    box-shadow: 0 0 0 5px var(--bg);
+  }
+  .logo img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  .job-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+  }
+  .job h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.15em;
+  }
+  .dates {
+    color: var(--faint);
+    font-size: 0.75em;
+    white-space: nowrap;
+  }
+  .role {
+    margin-top: 0.2rem;
+    font-size: 0.85em;
+  }
+  .summary {
+    margin-top: 0.45rem;
+    font-size: 0.8em;
+  }
+</style>

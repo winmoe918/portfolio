@@ -1,0 +1,55 @@
+---
+import { profile } from "../data/site";
+---
+
+<section id="top" class="hero">
+  <img
+    class="avatar"
+    src="/images/avatar.webp"
+    alt={`Portrait of ${profile.name}`}
+    width="512"
+    height="512"
+    fetchpriority="high"
+    data-reveal="fade-up"
+    data-intensity="0"
+  />
+  <h1 data-reveal="fade-up" data-split="words" data-stagger="125">{profile.greeting}</h1>
+  <ul class="tagline" data-reveal="fade-right" data-intensity="0" aria-label="Highlights">
+    {profile.tagline.map((t) => <li>{t}</li>)}
+  </ul>
+  {profile.bio.map((p) => <p data-reveal="fade-up" data-intensity="2">{p}</p>)}
+</section>
+
+<style>
+  .hero > * + * {
+    margin-top: var(--spacing);
+  }
+  .avatar {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 100%;
+    object-fit: cover;
+  }
+  .tagline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    list-style: none;
+    color: var(--muted);
+    font-size: 0.8em;
+    letter-spacing: 0.02em;
+  }
+  .tagline li + li::before {
+    content: "·";
+    margin-right: 1rem;
+    color: var(--faint);
+  }
+  @media (max-width: 736px) {
+    .avatar {
+      margin-inline: auto;
+    }
+    .tagline {
+      justify-content: center;
+    }
+  }
+</style>

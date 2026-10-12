@@ -1,0 +1,71 @@
+---
+import { links, profile } from "../data/site";
+import LineIcon from "./LineIcon.astro";
+---
+
+<footer class="footer">
+  <p>© {new Date().getFullYear()} {profile.name}. All rights reserved.</p>
+  <ul class="socials" aria-label="Contact links">
+    <li><a class="s-mail" href={`mailto:${links.email}`} aria-label={`Email ${links.email}`}><LineIcon name="mail" /></a></li>
+    <li><a class="s-phone" href={links.phoneHref} aria-label={`Call ${links.phone}`}><LineIcon name="phone" /></a></li>
+    <li>
+      <a class="s-linkedin" href={links.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><LineIcon name="linkedin" /></a>
+    </li>
+    <li>
+      <a class="s-github" href={links.github} target="_blank" rel="noopener" aria-label="GitHub"><LineIcon name="github" /></a>
+    </li>
+  </ul>
+</footer>
+
+<style>
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 5rem;
+    color: var(--faint);
+    font-size: 0.75em;
+  }
+  /* Contact icons only: no card or circle backgrounds */
+  .socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.75rem;
+    list-style: none;
+  }
+  .socials a {
+    display: flex;
+    color: rgba(255, 255, 255, 0.75);
+    transition:
+      color 0.3s ease,
+      transform 0.3s ease;
+  }
+  .socials a:hover {
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+  .socials .s-mail:hover {
+    color: #ea4335; /* Gmail red */
+  }
+  .socials .s-phone:hover {
+    color: var(--accent);
+  }
+  .socials .s-linkedin:hover {
+    color: #0a8fd6;
+  }
+  .socials .s-github:hover {
+    color: #a78bfa;
+  }
+  .socials :global(.line-icon) {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  @media (max-width: 736px) {
+    .footer {
+      flex-direction: column-reverse;
+      justify-content: center;
+    }
+  }
+</style>

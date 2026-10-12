@@ -1,0 +1,63 @@
+---
+import { previouslyAt } from "../data/site";
+---
+
+<section class="section logo-strip" aria-labelledby="previously-label">
+  <p id="previously-label" class="label" data-reveal="fade-right" data-intensity="0">Previously at</p>
+  <ul class="logos" data-reveal="fade-down" data-stagger="125">
+    {
+      previouslyAt.map((logo) => (
+        <li>
+          <img
+            src={logo.src}
+            alt={logo.wordmark ? "" : logo.name}
+            width={Math.round(40 * logo.ratio)}
+            height="40"
+            style={`height:${logo.height}em`}
+            loading="lazy"
+          />
+          {logo.wordmark && <span>{logo.wordmark}</span>}
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .logo-strip {
+    margin-top: 4rem;
+  }
+  .logos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem 2.75rem;
+    list-style: none;
+  }
+  .logos li {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    opacity: 0.6;
+    transition: opacity 0.375s ease;
+  }
+  .logos li:hover {
+    opacity: 1;
+  }
+  .logos img {
+    width: auto;
+    filter: brightness(0) invert(1); /* monochrome white to match the dark theme */
+  }
+  .logos span {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 1.05em;
+    letter-spacing: -0.01em;
+  }
+  @media (max-width: 736px) {
+    .logos {
+      justify-content: center;
+      gap: 1.25rem 2rem;
+    }
+  }
+</style>

@@ -1,0 +1,192 @@
+---
+import { links, profile } from "../data/site";
+import Icon from "./Icon.astro";
+import SectionTitle from "./SectionTitle.astro";
+---
+
+<section id="intro" class="section">
+  <p class="label" data-reveal="fade-right" data-intensity="0">Intro</p>
+  <SectionTitle>A quick <span class="grad">hello</span></SectionTitle>
+  <div class="video" data-reveal="fade-up" data-video data-video-id={links.youtubeId}>
+    <!-- Facade: YouTube loads only after a click, which keeps the page fast -->
+    <button class="poster" type="button" data-play-video aria-label={`Play ${profile.name}'s intro video`}>
+      <img
+        src="/images/intro-thumb.webp"
+        srcset="/images/intro-thumb-800.webp 800w, /images/intro-thumb.webp 1254w"
+        sizes="(max-width: 736px) 92vw, 48rem"
+        alt=""
+        width="1254"
+        height="705"
+        loading="lazy"
+      />
+      <span class="overlay">
+        <span class="overlay-text">
+          <span class="overlay-label">Intro video</span>
+          <span class="overlay-title">Meet {profile.name.split(" ")[0]}</span>
+          <span class="overlay-sub">Full-Stack AI Engineer · Ex-Uber</span>
+        </span>
+        <span class="play"><span class="play-dot"><Icon name="play" /></span>Watch intro</span>
+      </span>
+    </button>
+  </div>
+</section>
+
+<script>
+  const box = document.querySelector<HTMLElement>("[data-video]");
+
+  const play = (): void => {
+    if (!box || box.querySelector("iframe")) return;
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://www.youtube-nocookie.com/embed/${box.dataset.videoId}?autoplay=1&rel=0&modestbranding=1`;
+    iframe.title = "Win Moe intro video";
+    iframe.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+    iframe.allowFullscreen = true;
+    box.replaceChildren(iframe);
+  };
+
+  box?.querySelector("[data-play-video]")?.addEventListener("click", play);
+</script>
+
+<style>
+  .video {
+    position: relative;
+    margin-top: 2rem;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 2rem;
+    background: #000;
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .video :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .poster {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  /* Dark overlay along the bottom, where the text sits, so the face stays clear */
+  .poster::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(0deg, rgba(15, 17, 17, 0.92) 0%, rgba(15, 17, 17, 0.55) 30%, rgba(15, 17, 17, 0) 60%),
+      rgba(15, 17, 17, 0.12);
+    transition: opacity 0.375s ease;
+  }
+  .poster:hover::after {
+    opacity: 0.85;
+  }
+  .overlay {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.75rem 2rem;
+    color: var(--text);
+    text-align: left;
+  }
+  .overlay-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .overlay-label {
+    font-size: 0.65em;
+    font-weight: 300;
+    letter-spacing: 0.3rem;
+    text-transform: uppercase;
+  }
+  .overlay-title {
+    font-family: var(--font-head);
+    font-size: 2em;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+  .overlay-sub {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.8em;
+  }
+  .play {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1.4rem 0.5rem 0.5rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--btn-text);
+    font-family: var(--font-body);
+    font-size: 0.9em;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    transition: transform 0.375s ease;
+  }
+  .play-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 100%;
+    background: var(--accent-strong);
+    color: #ffffff;
+  }
+  .play-dot :global(.icon) {
+    margin-left: 0.1em; /* optical centering of the triangle */
+  }
+  .poster:hover .play,
+  .poster:focus-visible .play {
+    transform: scale(1.0425);
+  }
+  .poster:hover img {
+    transform: scale(1.02);
+  }
+  @media (max-width: 736px) {
+    .video {
+      border-radius: 1.5rem;
+    }
+    .overlay {
+      gap: 0.6rem;
+      padding: 1rem;
+    }
+    .overlay-label,
+    .overlay-sub {
+      display: none;
+    }
+    .overlay-title {
+      font-size: 1.5em;
+    }
+    .play {
+      padding: 0.3rem 1rem 0.3rem 0.3rem;
+      font-size: 0.8em;
+    }
+    .play-dot {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+</style>

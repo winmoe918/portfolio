@@ -1,0 +1,417 @@
+/* Tokens and base styles. Values mirror johan.co (Carrd) — see the design spec. */
+:root {
+  --bg: #1b1c1c;
+  --bg-top: #262829;
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.66);
+  --faint: rgba(255, 255, 255, 0.4);
+  --line: rgba(255, 255, 255, 0.09);
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-hover: rgba(255, 255, 255, 0.07);
+  --accent: #22c55e;
+  --accent-strong: #15803d;
+  --btn-text: #404547;
+  --font-head: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --width: 48rem;
+  --pad-x: 6rem;
+  --pad-y: 6rem;
+  --spacing: 1.5rem;
+  --ease: ease;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 18pt;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: none;
+}
+
+body {
+  min-height: 100vh;
+  min-width: 320px;
+  overflow-x: hidden;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.375;
+  word-wrap: break-word;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 100%);
+}
+
+/* Page fade-in on load (Carrd: .site-main opacity 0.625s) */
+.site-main {
+  transition: opacity 0.625s ease-in-out;
+}
+html.is-loading .site-main {
+  opacity: 0;
+}
+
+/* Loader: five bouncing dots (after johan.co's Carrd loader), shown while html.is-loading */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s;
+}
+html.is-loading .loader {
+  opacity: 1;
+  visibility: visible;
+}
+.loader span {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  animation: loader-bounce 1.8s ease-in-out infinite;
+}
+.loader span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loader span:nth-child(3) {
+  animation-delay: 0.4s;
+  background: var(--accent);
+}
+.loader span:nth-child(4) {
+  animation-delay: 0.6s;
+}
+.loader span:nth-child(5) {
+  animation-delay: 0.8s;
+}
+@keyframes loader-bounce {
+  0%,
+  40%,
+  100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-0.6rem);
+  }
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0.5rem;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--text);
+  color: var(--bg);
+}
+.skip-link:focus {
+  left: 0.5rem;
+}
+
+/* Layout */
+.site-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.site-main > .inner {
+  width: var(--width);
+  max-width: 100%;
+  padding: var(--pad-y) var(--pad-x);
+}
+
+.section {
+  margin-top: 6rem;
+  scroll-margin-top: 4rem;
+}
+.section > * + * {
+  margin-top: var(--spacing);
+}
+
+/* Typography */
+h1,
+h2,
+h3 {
+  font-family: var(--font-head);
+  font-weight: 500;
+  line-height: 1.125;
+}
+h1 {
+  font-size: 3.25em;
+}
+h2 {
+  font-size: 2.75em;
+  letter-spacing: 0.025rem;
+}
+h3 {
+  font-size: 1.35em;
+}
+p {
+  color: var(--text);
+}
+.muted {
+  color: var(--muted);
+}
+.accent {
+  color: var(--accent);
+}
+
+.label {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 0.75em;
+  line-height: 1.5;
+  letter-spacing: 0.35rem;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.text-link {
+  color: var(--accent);
+}
+.text-link:hover {
+  color: #747989;
+}
+
+.icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+/* Buttons (Carrd buttons style-1) */
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  list-style: none;
+}
+.section > .buttons,
+.buttons.spaced {
+  margin-top: 2rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  height: 3.75rem;
+  padding: 0 1.875rem;
+  border: 0;
+  border-radius: 0.875rem;
+  background-color: #ffffff;
+  color: var(--btn-text);
+  font-family: var(--font-body);
+  font-size: 1em;
+  font-weight: 400;
+  letter-spacing: 0.025rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform 0.375s ease,
+    color 0.375s ease,
+    background-color 0.375s ease;
+}
+.btn:hover {
+  transform: scale(1.0425);
+}
+.btn svg {
+  width: 1.125em;
+  height: 1.125em;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+.btn-primary {
+  background-color: var(--accent-strong);
+  color: #ffffff;
+}
+.btn-ghost {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.btn-small {
+  height: 2.5rem;
+  padding: 0 1.1rem;
+  font-size: 0.8em;
+  border-radius: 0.65rem;
+}
+
+/* Round icon buttons (Carrd icons style-2) */
+.icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.375rem;
+  list-style: none;
+  font-size: 1.5em;
+}
+.icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  background-color: #ffffff;
+  transition: transform 0.375s ease;
+}
+.icons a:hover {
+  transform: scale(1.06);
+}
+.icons svg {
+  width: 55%;
+  height: 55%;
+  fill: var(--btn-text);
+}
+
+/* Cards */
+.card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2rem;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: background-color 0.375s ease;
+}
+.card:hover {
+  background: var(--surface-hover);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  list-style: none;
+}
+.chip {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--muted);
+  font-size: 0.7em;
+  line-height: 1.4;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.14);
+  color: var(--accent);
+  font-size: 0.65em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge.neutral {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+}
+
+/* Reveal: initial states are applied by reveal.ts so no-JS visitors see everything */
+[data-split] .word {
+  display: inline-block;
+}
+
+/* Responsive (Carrd breakpoints) */
+@media (max-width: 1680px) {
+  html {
+    font-size: 13pt;
+  }
+}
+@media (max-width: 980px) {
+  html {
+    font-size: 11pt;
+  }
+}
+@media (max-width: 736px) {
+  html {
+    font-size: 12pt;
+  }
+  :root {
+    --pad-x: 1.5rem;
+    --pad-y: 4rem;
+  }
+  .site-main > .inner {
+    text-align: center;
+  }
+  .buttons,
+  .icons,
+  .chips {
+    justify-content: center;
+  }
+  h1 {
+    font-size: 2.5em;
+  }
+  h2 {
+    font-size: 2em;
+  }
+  .section {
+    margin-top: 4.5rem;
+  }
+}
+@media (max-width: 480px) {
+  :root {
+    --spacing: 1.3125rem;
+  }
+  .buttons.stack-mobile {
+    flex-direction: column;
+  }
+  .buttons.stack-mobile .btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,64 @@
+---
+import { education, languages, skills } from "../data/site";
+---
+
+<section class="section" aria-labelledby="skills-label">
+  <p id="skills-label" class="label" data-reveal="fade-right" data-intensity="0">Skills</p>
+  <div class="groups">
+    {
+      skills.map((g) => (
+        <div class="group" data-reveal="fade-up">
+          <h3>{g.group}</h3>
+          <ul class="chips">
+            {g.items.map((s) => (
+              <li class="chip">{s}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+  <div class="card edu" data-reveal="fade-up">
+    <div>
+      <h3>{education.school}</h3>
+      <p class="muted">{education.degree} · {education.note}</p>
+    </div>
+    <p class="muted langs">{languages.join(" · ")}</p>
+  </div>
+</section>
+
+<style>
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 2rem;
+  }
+  .group h3 {
+    margin-bottom: 0.7rem;
+    font-size: 0.9em;
+  }
+  .group .chips {
+    justify-content: flex-start;
+  }
+  .edu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 2rem;
+    padding: 1.5rem 1.75rem;
+    border-radius: 1.75rem;
+    text-align: left;
+  }
+  .edu h3 {
+    font-size: 1em;
+  }
+  .edu p {
+    font-size: 0.8em;
+  }
+  @media (max-width: 736px) {
+    .groups {
+      grid-template-columns: 1fr;
+      text-align: left;
+    }
+  }
+</style>
