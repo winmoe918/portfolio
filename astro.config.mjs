@@ -1,6 +1,6 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://winmoe.netlify.app",
+  site: "https://winmoee.com",
   build: { inlineStylesheets: "always" },
 });
