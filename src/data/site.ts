@@ -3,16 +3,16 @@
 
 export const profile = {
   name: "Win Moe",
-  title: "Win Moe, Full-Stack AI Engineer",
+  title: "Win Moe, Software Engineer, AI & Data Systems",
   description:
-    "Full-stack AI engineer building production AI products end to end. Ex-Uber data engineer (200M+ records a day), UC Berkeley CS, founder of Workify.",
+    "Software engineer building AI and data systems end to end. Ex-Uber data engineer (200M+ records a day), UC Berkeley CS, founder of Workify.",
   greeting: "Hi, I'm Win 👋",
   bio: [
-    "I'm a full-stack AI engineer in Sunnyvale, California. I build production AI products end to end: the data pipelines underneath, the LLM and RAG systems in the middle, and the web apps people actually use.",
+    "I'm a software engineer focused on AI and data systems, based in Millbrae, California. I build production AI products end to end: the data pipelines underneath, the LLM and RAG systems in the middle, and the web apps people actually use.",
     "At Uber I built Spark and Kafka pipelines processing 200M+ records a day and cut $290K a year in compute. I've also evaluated frontier-model output for a top AI lab, shipped a multimodal RAG system that's live in two products, and founded Workify. UC Berkeley CS, full-ride Regents' Scholarship.",
   ],
-  tagline: ["Full-Stack AI Engineer", "Ex-Uber", "UC Berkeley CS"],
-  location: "Sunnyvale, CA",
+  tagline: ["Software Engineer, AI & Data Systems", "Ex-Uber", "UC Berkeley CS"],
+  location: "Millbrae, CA",
 };
 
 export const links = {
@@ -30,8 +30,8 @@ export const links = {
 export const resume = {
   pdf: "/assets/Win_Moe_Resume.pdf",
   fileName: "Win_Moe_Resume.pdf",
-  role: "Full-Stack AI Engineer",
-  subtitle: "Full-Stack Engineer · Ex-Uber · UC Berkeley CS · Sunnyvale, CA",
+  role: "Software Engineer, AI & Data Systems",
+  subtitle: "Software Engineer, AI & Data Systems · Ex-Uber · UC Berkeley CS · Millbrae, CA",
 };
 
 export interface Logo {
@@ -53,7 +53,7 @@ export const previouslyAt: Logo[] = [
 ];
 
 export const workify = {
-  label: "Founder · Workify",
+  label: "Founder & Lead Software Engineer · Workify",
   heading: "One place to run fleet maintenance",
   body: "Workify gives maintenance teams an AI repair assistant that answers from their equipment's service manuals, text and diagrams, plus team accounts, seats and billing plans that grow from one technician to the whole fleet.",
   features: [
@@ -216,51 +216,51 @@ export const experience: Job[] = [
   {
     company: "Workify",
     logo: "/logos/workify.png",
-    role: "Founder & Engineer",
+    role: "Lead Software Engineer",
     dates: "May 2026 – Present",
     summary:
-      "Founded a fleet-maintenance platform with an AI manual assistant. Own the product, architecture and engineering end to end.",
+      "Built a multimodal RAG backend (FastAPI, Gemini, LangChain, ChromaDB) that answers from service manual PDFs, text and diagrams, in the user's language. It powers two live products: the Workify AI repair chat and the Seinn Yaung So marketplace. Also built the Workify SaaS (Next.js, Supabase, Stripe) with team accounts, seats and tiered billing, plus an equity vesting tracker with live pricing and tamper-proof history.",
     current: true,
-  },
-  {
-    company: "Uber",
-    logo: "/logos/uber.svg",
-    role: "Software Engineer I, Growth & Marketing Data",
-    dates: "May 2025 – Apr 2026",
-    summary:
-      "Owned end-to-end Spark and Kafka projects for growth and marketing analytics on 2B+ users. Built PySpark ETL pipelines and Kafka topics handling 200M+ real-time location rows a day, cutting personalization latency from 1 day to under 6 hours. Data-validation work saved $290K a year in compute. Recognized by a Staff Engineer for ownership and data-quality initiatives.",
   },
   {
     company: "Mercor",
     logo: "/logos/mercor.svg",
-    role: "Software Engineering Domain Expert (Contract)",
-    dates: "Dec 2025 – Jan 2026",
+    role: "Software Contractor",
+    dates: "Feb 2026 – May 2026",
     summary:
-      "Provided software engineering expertise to improve frontier models for a top AI lab, evaluating and refining complex technical outputs.",
+      "Evaluated and refined frontier AI models' software-engineering output for a top AI lab to improve their coding.",
   },
   {
     company: "Uber",
     logo: "/logos/uber.svg",
-    role: "Software Engineering Intern, Anomaly Detection",
+    role: "Software Engineer",
+    dates: "May 2025 – Apr 2026",
+    summary:
+      "Built and tuned PySpark ETL pipelines and Kafka topics over 200M+ real-time location records a day, cutting personalization latency from 1 day to under 6 hours for A/B tests on 2B+ users. Cut redundant workflows and tuned Spark jobs to hold runtime under 4 hours through a migration, and built data-validation checks that caught quality issues, saving $290K a year.",
+  },
+  {
+    company: "Uber",
+    logo: "/logos/uber.svg",
+    role: "Software Engineering Intern, Core Services (Anomaly Detection)",
     dates: "May 2024 – Aug 2024",
     summary:
-      "Parallelized Cadence workflows in Go across 370 metric groups, cutting anomaly detection from 1 hour to under 15 minutes. Moved a gRPC API layer from Python to Go.",
+      "Parallelized workflow orchestration with Uber's Cadence framework in Go across 370 metric groups, cutting anomaly detection time from 1 hour to under 15 minutes while keeping fault tolerance. Migrated a gRPC SQL fetch-and-analysis layer from Python to Go using clean architecture.",
   },
   {
-    company: "Yanmar",
+    company: "YANMAR America",
     logo: "/logos/yanmar.svg",
-    role: "Data Engineering Intern, Business Intelligence",
+    role: "Data Engineering Intern, Rural Lifestyle Business Intelligence",
     dates: "May 2023 – Apr 2024",
     summary:
-      "Automated Salesforce-to-Snowflake ETL and Power BI dataflows, removing 4 hours of manual reporting a week. Built scrapers covering 560+ competitor models.",
+      "Automated Salesforce-to-Snowflake ETL and Power BI dataflows, removing 4 hours of weekly manual reporting.",
   },
   {
-    company: "UC Berkeley Data Lab",
+    company: "UC Berkeley",
     logo: "/logos/berkeley.svg",
-    role: "Undergraduate Research Apprentice",
-    dates: "Jul 2022 – Apr 2024",
+    role: "Undergraduate Research Assistant, FactGrid Cuneiform Project (NLP)",
+    dates: "May 2022 – Apr 2024",
     summary:
-      "Built Python pipelines to clean, segment and analyze 150,000+ unstructured JSON files for network research. Co-built a Swift iOS app (4,500+ lines) used by 1,000+ people.",
+      "Built Python pipelines over 150,000+ JSON files for NLP research. Co-built a Swift iOS app with 1,000+ users.",
   },
 ];
 
